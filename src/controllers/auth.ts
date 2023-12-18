@@ -12,13 +12,10 @@ export const login: RequestHandler = (req, res) => {
         return res.status(400).json({ error: "Dados inválidos" });
 
     if (!auth.validatePassword(body.data.password)) {
-        console.log("Erro aqui");
         return res.status(403).json({ error: "Acesso negado" });
     }
 
     const token = auth.getToken();
-    console.log(token);
-
     res.json({ token });
 };
 
