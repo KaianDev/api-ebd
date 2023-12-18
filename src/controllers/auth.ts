@@ -10,11 +10,14 @@ export const login: RequestHandler = (req, res) => {
     const body = loginSchema.safeParse(req.body);
     if (!body.success)
         return res.status(400).json({ error: "Dados inválidos" });
-        
-    if (!auth.validatePassword(body.data.password))
+
+    if (!auth.validatePassword(body.data.password)) {
+        console.log("Erro aqui");
         return res.status(403).json({ error: "Acesso negado" });
+    }
 
     const token = auth.getToken();
+    console.log(token);
 
     res.json({ token });
 };
