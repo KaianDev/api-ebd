@@ -89,17 +89,30 @@ export const search: RequestHandler = async (req, res) => {
     const searchMemberSchema = z.object({
         name: z.string().optional(),
         sex: z.enum(["M", "F"]).optional(),
-        hasChild: z.boolean().optional(),
-        isTeacher: z.boolean().optional(),
-        status: z.boolean().optional(),
+        hasChild: z.string().optional(),
+        isTeacher: z.string().optional(),
         birthMonth: z.string().optional(),
     });
 
-    const body = searchMemberSchema.safeParse(req.body);
+    const query = searchMemberSchema.safeParse(req.query);
 
-    if (!body.success)
+    if (!query.success)
         return res.status(400).json({ error: "Dados inválidos" });
-    const results = await members.search(body.data);
+    const results = await members.search({
+        ...query.data,
+        hasChild:
+            query.data.hasChild === "yes"
+                ? true
+                : query.data.hasChild === "no"
+                ? false
+                : undefined,
+        isTeacher:
+            query.data.isTeacher === "yes"
+                ? true
+                : query.data.isTeacher === "no"
+                ? false
+                : undefined,
+    });
 
     if (results) return res.json({ members: results });
     res.json({ error: "Ocorreu um erro" });
