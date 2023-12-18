@@ -23,9 +23,11 @@ const runServer = (port: number, server: http.Server) => {
 
 const regularServer = http.createServer(app);
 
-if (process.env.NODE_ENV === "production") {
-    // Configurar o server em produção
-} else {
-    const port: number = process.env.PORT ? parseInt(process.env.PORT) : 9000;
-    runServer(port, regularServer);
-}
+// if (process.env.NODE_ENV === "production") {
+//     // Configurar o server em produção
+// } else {
+//     const port: number = process.env.PORT ? parseInt(process.env.PORT) : 9000;
+//     runServer(port, regularServer);
+// }
+const port: number = process.env.PORT ? parseInt(process.env.PORT) : 9000;
+runServer(port, regularServer);
