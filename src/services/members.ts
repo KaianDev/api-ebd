@@ -60,6 +60,9 @@ export const search = async (filter: Filter) => {
                     mode: "insensitive",
                 },
             },
+            orderBy: {
+                birthDate: "asc",
+            },
         });
     } catch (err) {
         return false;
