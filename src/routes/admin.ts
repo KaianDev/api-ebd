@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/login", auth.login);
 
-router.get("/ping", auth.validate, (req, res) => {
+router.get("/ping", (req, res) => {
     res.json({ pong: true, admin: true });
 });
 
