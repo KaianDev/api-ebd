@@ -1,32 +1,34 @@
 import { RequestHandler } from "express";
 import { z } from "zod";
-import * as auth from "../services/auth";
+import bcrypt from "bcrypt";
+import * as users from "../services/users";
 
-export const login: RequestHandler = (req, res) => {
-    const loginSchema = z.object({
+export const login: RequestHandler = async (req, res) => {
+    const LoginSchema = z.object({
+        email: z.string().email(),
         password: z.string(),
     });
 
-    const body = loginSchema.safeParse(req.body);
-    if (!body.success)
-        return res.status(400).json({ error: "Dados inválidos" });
+    const body = LoginSchema.safeParse(req.body);
+    if (body.success) {
+        const { email, password } = body.data;
+        const hasUser = await users.getUserByEmail(email);
 
-    if (!auth.validatePassword(body.data.password)) {
-        return res.status(403).json({ error: "Acesso negado" });
+        if (!hasUser) return res.json({ error: "Usuário não existe" });
+
+        const matchedPassword = await bcrypt.compare(
+            password,
+            hasUser.password
+        );
+
+        if (matchedPassword) {
+            return res.json({ message: "Acesso autorizado" });
+        } else {
+            return res.json({ error: "Acesso negado" });
+        }
     }
 
-    const token = auth.getToken();
-    res.json({ token });
+    res.json({ error: "Ocorreu um erro" });
 };
 
-export const validate: RequestHandler = (req, res, next) => {
-    if (!req.headers.authorization)
-        return res.status(403).json({ error: "Acesso negado" });
-
-    const token = req.headers.authorization.split(" ")[1];
-
-    if (!auth.validateToken(token))
-        return res.status(403).json({ error: "Acesso negado" });
-
-    next();
-};
+export const validate: RequestHandler = (req, res, next) => {};
