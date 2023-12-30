@@ -2,11 +2,12 @@ import { RequestHandler } from "express";
 import { z } from "zod";
 import * as members from "../services/members";
 import { getMonth } from "../utils/getMonth";
+import { toBoolean } from "../utils/toBoolean";
 
 export const getAll: RequestHandler = async (req, res) => {
     const items = await members.getAll();
     if (items) {
-        return res.json({ members: items });
+        return res.json(items);
     }
     res.json({ error: "Ocorreu um erro" });
 };
@@ -14,7 +15,7 @@ export const getAll: RequestHandler = async (req, res) => {
 export const getOne: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const item = await members.getOne(parseInt(id));
-    if (item) return res.json({ member: item });
+    if (item) return res.json(item);
     res.json({ error: "Ocorreu um erro" });
 };
 
@@ -23,8 +24,8 @@ export const createMember: RequestHandler = async (req, res) => {
         name: z.string(),
         birthDate: z.string(),
         sex: z.enum(["M", "F"]),
-        hasChild: z.boolean(),
-        isTeacher: z.boolean(),
+        hasChild: z.enum(["yes", "no"]).transform((data) => toBoolean(data)),
+        isTeacher: z.enum(["yes", "no"]).transform((data) => toBoolean(data)),
     });
 
     const body = createMemberSchema.safeParse(req.body);
@@ -33,14 +34,13 @@ export const createMember: RequestHandler = async (req, res) => {
 
     const birthDate = new Date(body.data.birthDate);
     const birthMonth = getMonth(birthDate);
-
     const newMember = await members.create({
         ...body.data,
         birthDate,
         birthMonth,
     });
 
-    if (newMember) return res.json({ member: newMember });
+    if (newMember) return res.json(newMember);
 
     res.json({ error: "Ocorreu um erro" });
 };
@@ -51,8 +51,14 @@ export const updateMember: RequestHandler = async (req, res) => {
         name: z.string().optional(),
         birthDate: z.string().optional(),
         sex: z.enum(["M", "F"]).optional(),
-        hasChild: z.boolean().optional(),
-        isTeacher: z.boolean().optional(),
+        hasChild: z
+            .enum(["yes", "no"])
+            .transform((data) => toBoolean(data))
+            .optional(),
+        isTeacher: z
+            .enum(["yes", "no"])
+            .transform((data) => toBoolean(data))
+            .optional(),
         status: z.boolean().optional(),
     });
 
@@ -89,8 +95,14 @@ export const search: RequestHandler = async (req, res) => {
     const searchMemberSchema = z.object({
         name: z.string().optional(),
         sex: z.enum(["M", "F"]).optional(),
-        hasChild: z.string().optional(),
-        isTeacher: z.string().optional(),
+        hasChild: z
+            .enum(["yes", "no"])
+            .transform((data) => toBoolean(data))
+            .optional(),
+        isTeacher: z
+            .enum(["yes", "no"])
+            .transform((data) => toBoolean(data))
+            .optional(),
         birthMonth: z.string().optional(),
     });
 
@@ -100,20 +112,8 @@ export const search: RequestHandler = async (req, res) => {
         return res.status(400).json({ error: "Dados inválidos" });
     const results = await members.search({
         ...query.data,
-        hasChild:
-            query.data.hasChild === "yes"
-                ? true
-                : query.data.hasChild === "no"
-                ? false
-                : undefined,
-        isTeacher:
-            query.data.isTeacher === "yes"
-                ? true
-                : query.data.isTeacher === "no"
-                ? false
-                : undefined,
     });
 
-    if (results) return res.json({ members: results });
+    if (results) return res.json(results);
     res.json({ error: "Ocorreu um erro" });
 };
