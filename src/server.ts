@@ -2,8 +2,7 @@ import express from "express";
 import "dotenv/config";
 import cors from "cors";
 import http from "http";
-import https from "https";
-import adminRoutes from "./routes/admin";
+import routes from "./routes/routes";
 import { requestInterceptor } from "./utils/requestInterceptor";
 
 const app = express();
@@ -13,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.all("*", requestInterceptor);
-app.use("/", adminRoutes);
+app.use(routes);
 
 const runServer = (port: number, server: http.Server) => {
     server.listen(port, () => {
@@ -23,11 +22,5 @@ const runServer = (port: number, server: http.Server) => {
 
 const regularServer = http.createServer(app);
 
-// if (process.env.NODE_ENV === "production") {
-//     // Configurar o server em produção
-// } else {
-//     const port: number = process.env.PORT ? parseInt(process.env.PORT) : 9000;
-//     runServer(port, regularServer);
-// }
 const port: number = process.env.PORT ? parseInt(process.env.PORT) : 9000;
 runServer(port, regularServer);
