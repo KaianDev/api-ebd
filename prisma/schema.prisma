@@ -18,6 +18,7 @@ model Member {
   sex        Sex
   hasChild   Boolean
   isTeacher  Boolean  @default(false)
+  isMarried  Boolean  @default(false)
   status     Boolean  @default(true)
 
   @@map("members")

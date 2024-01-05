@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import * as users from "../services/users";
+import * as users from "../models/users";
 
 export const createUser: RequestHandler = async (req, res) => {
     const CreateUserSchema = z.object({

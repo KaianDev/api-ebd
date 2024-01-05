@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { z } from "zod";
-import * as members from "../services/members";
+import * as members from "../models/members";
 import { getMonth } from "../utils/getMonth";
 import { toBoolean } from "../utils/toBoolean";
 
@@ -26,6 +26,7 @@ export const createMember: RequestHandler = async (req, res) => {
         sex: z.enum(["M", "F"]),
         hasChild: z.enum(["yes", "no"]).transform((data) => toBoolean(data)),
         isTeacher: z.enum(["yes", "no"]).transform((data) => toBoolean(data)),
+        isMarried: z.enum(["yes", "no"]).transform((data) => toBoolean(data)),
     });
 
     const body = createMemberSchema.safeParse(req.body);
@@ -56,6 +57,10 @@ export const updateMember: RequestHandler = async (req, res) => {
             .transform((data) => toBoolean(data))
             .optional(),
         isTeacher: z
+            .enum(["yes", "no"])
+            .transform((data) => toBoolean(data))
+            .optional(),
+        isMarried: z
             .enum(["yes", "no"])
             .transform((data) => toBoolean(data))
             .optional(),
