@@ -8,7 +8,7 @@ const router = Router();
 router.post("/login", auth.login);
 
 router.get("/ping", (req, res) => {
-    res.json({ pong: true, admin: true });
+  res.json({ pong: true, admin: true });
 });
 
 router.post("/users", users.createUser);

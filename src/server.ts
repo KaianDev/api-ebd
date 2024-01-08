@@ -3,21 +3,23 @@ import "dotenv/config";
 import cors from "cors";
 import http from "http";
 import routes from "./routes/routes";
-import { requestInterceptor } from "./utils/requestInterceptor";
+import { requestInterceptor } from "./middlewares/requestInterceptor";
+import { originInterceptor } from "./middlewares/originInterceptor";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: process.env.ORIGIN_URL || "http://localhost:3000" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.all("*", requestInterceptor);
+app.use(originInterceptor);
 app.use(routes);
 
 const runServer = (port: number, server: http.Server) => {
-    server.listen(port, () => {
-        console.log(`🚀 Running at PORT: ${port}`);
-    });
+  server.listen(port, () => {
+    console.log(`🚀 Running at PORT: ${port}`);
+  });
 };
 
 const regularServer = http.createServer(app);
