@@ -1,14 +1,15 @@
-import express from "express";
 import "dotenv/config";
+import express from "express";
 import cors from "cors";
 import http from "http";
 import routes from "./routes/routes";
 import { requestInterceptor } from "./middlewares/requestInterceptor";
 import { originInterceptor } from "./middlewares/originInterceptor";
+import { ORIGIN_URL } from "./constants/originURL";
 
 const app = express();
 
-app.use(cors({ origin: process.env.ORIGIN_URL || "http://localhost:3000" }));
+app.use(cors({ origin: ORIGIN_URL }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
