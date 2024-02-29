@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as auth from "../controllers/auth";
 import * as members from "../controllers/members";
 import * as users from "../controllers/users";
+import { authValidation } from "../middlewares/authValidation";
 
 const router = Router();
 
@@ -13,11 +14,11 @@ router.get("/ping", (req, res) => {
 
 router.post("/users", users.createUser);
 
-router.get("/members", members.getAll);
-router.get("/members/search", members.search);
-router.get("/members/:id", members.getOne);
-router.post("/members", members.createMember);
-router.put("/members/:id", members.updateMember);
-router.delete("/members/:id", members.removeMember);
+router.get("/members", authValidation, members.getAll);
+router.get("/members/search", authValidation, members.search);
+router.get("/members/:id", authValidation, members.getOne);
+router.post("/members", authValidation, members.createMember);
+router.put("/members/:id", authValidation, members.updateMember);
+router.delete("/members/:id", authValidation, members.removeMember);
 
 export default router;

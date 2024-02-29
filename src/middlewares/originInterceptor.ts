@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { ORIGIN_URL } from "../constants/originURL";
+import { ORIGIN_URL } from "../constants";
 
 export const originInterceptor: RequestHandler = (req, res, next) => {
   if (req.headers.origin && req.headers.origin === ORIGIN_URL) return next();

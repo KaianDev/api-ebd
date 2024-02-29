@@ -5,7 +5,7 @@ import http from "http";
 import routes from "./routes/routes";
 import { requestInterceptor } from "./middlewares/requestInterceptor";
 import { originInterceptor } from "./middlewares/originInterceptor";
-import { ORIGIN_URL } from "./constants/originURL";
+import { ORIGIN_URL } from "./constants";
 
 const app = express();
 
