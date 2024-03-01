@@ -12,7 +12,7 @@ router.get("/ping", (req, res) => {
   res.json({ pong: true, admin: true });
 });
 
-router.post("/users", users.createUser);
+router.post("/users", authValidation, users.createUser);
 
 router.get("/members", authValidation, members.getAll);
 router.get("/members/search", authValidation, members.search);
